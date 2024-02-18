@@ -11,8 +11,17 @@ def foo(x):
     return foo(x-1) + foo(x-2)
 
 def longest_run(mylist, key):
-    ### TODO
-    pass
+    max_len = 0
+    curr_len = 0
+
+    for num in mylist:
+        if num == key:
+          curr_len += 1
+          max_len = max(max_len, curr_len)
+    else:
+      curr_len = 0
+
+    return max_len      
 
 
 class Result:
@@ -37,10 +46,40 @@ def to_value(v):
         return v.longest_size
     else:
         return int(v)
-        
+
 def longest_run_recursive(mylist, key):
-    ### TODO
-    pass
+  if not mylist:
+      return Result(0, 0, 0, False)
+  if len(mylist) == 1:
+      if mylist[0] == key:
+          return Result(1, 1, 1, True)
+      else:
+          return Result(0, 0, 0, False)
+
+  mid = len(mylist) // 2
+  left_sublist = mylist[:mid]
+  right_sublist = mylist[mid:]
+
+  left_result = longest_run_recursive(left_sublist, key)
+  right_result = longest_run_recursive(right_sublist, key)
+
+  left_size = left_result.left_size
+  if left_result.is_entire_range and len(right_sublist) > 0 and right_sublist[0] == key:
+      left_size += right_result.left_size
+
+  right_size = right_result.right_size
+  if right_result.is_entire_range and len(left_sublist) > 0 and left_sublist[-1] == key:
+      right_size += left_result.right_size
+
+  longest_size = max(left_result.longest_size, right_result.longest_size, left_result.right_size + right_result.left_size)
+
+  is_entire_range = left_result.is_entire_range and right_result.is_entire_range
+
+  return Result(left_size, right_size, longest_size, is_entire_range)
+
+  
+
+
 
 
 
